@@ -70,6 +70,44 @@ export const MOTION_PRESETS = Object.freeze({
     easing: EASING_CURVES.standard,
     fill: 'none'
   }),
+  'post-enter': Object.freeze({
+    keyframes: Object.freeze([
+      Object.freeze({ opacity: 0, transform: 'translateY(18px) scale(0.985)' }),
+      Object.freeze({ opacity: 1, transform: 'translateY(0px) scale(1)' })
+    ]),
+    duration: 360, easing: EASING_CURVES.decelerate, fill: 'both'
+  }),
+  'reaction-pop': Object.freeze({
+    keyframes: Object.freeze([
+      Object.freeze({ transform: 'scale(1)' }),
+      Object.freeze({ transform: 'scale(1.28)' }),
+      Object.freeze({ transform: 'scale(0.92)' }),
+      Object.freeze({ transform: 'scale(1.08)' }),
+      Object.freeze({ transform: 'scale(1)' })
+    ]),
+    duration: 420, easing: EASING_CURVES.spring, fill: 'both'
+  }),
+  'story-enter': Object.freeze({
+    keyframes: Object.freeze([
+      Object.freeze({ opacity: 0, transform: 'scale(0.88)' }),
+      Object.freeze({ opacity: 1, transform: 'scale(1)' })
+    ]),
+    duration: 320, easing: EASING_CURVES.spring, fill: 'both'
+  }),
+  'comment-enter': Object.freeze({
+    keyframes: Object.freeze([
+      Object.freeze({ opacity: 0, transform: 'translateY(10px)' }),
+      Object.freeze({ opacity: 1, transform: 'translateY(0px)' })
+    ]),
+    duration: 260, easing: EASING_CURVES.decelerate, fill: 'both'
+  }),
+  'notification-drop': Object.freeze({
+    keyframes: Object.freeze([
+      Object.freeze({ opacity: 0, transform: 'translateY(-12px) scale(0.98)' }),
+      Object.freeze({ opacity: 1, transform: 'translateY(0px) scale(1)' })
+    ]),
+    duration: 340, easing: EASING_CURVES.spring, fill: 'both'
+  }),
   shake: Object.freeze({
     keyframes: Object.freeze([
       Object.freeze({ transform: 'translateX(0px)' }),
@@ -84,6 +122,72 @@ export const MOTION_PRESETS = Object.freeze({
     fill: 'none'
   })
 });
+
+
+export const SPRING_PRESETS = Object.freeze({
+  gentle: Object.freeze({ mass: 1, stiffness: 120, damping: 18, velocity: 0 }),
+  standard: Object.freeze({ mass: 1, stiffness: 170, damping: 22, velocity: 0 }),
+  snappy: Object.freeze({ mass: 1, stiffness: 260, damping: 24, velocity: 0 }),
+  bouncy: Object.freeze({ mass: 1, stiffness: 220, damping: 12, velocity: 0 })
+});
+
+const NUMERIC_STYLE = /^(-?(?:\d+\.?\d*|\.\d+))([a-z%]*)$/i;
+
+/** Build WAAPI keyframes from a damped spring simulation. */
+export function createSpringKeyframes(from = {}, to = {}, options = {}) {
+  if (!from || !to || typeof from !== 'object' || typeof to !== 'object' || Array.isArray(from) || Array.isArray(to)) {
+    throw new TypeError('Spring endpoints must be style objects.');
+  }
+  const preset = typeof options.preset === 'string' ? SPRING_PRESETS[options.preset] : null;
+  if (options.preset && !preset) throw new Error(`Unknown spring preset: ${options.preset}`);
+  const cfg = { ...SPRING_PRESETS.standard, ...(preset ?? {}), ...options };
+  const mass = Math.max(0.01, Number(cfg.mass) || 1);
+  const stiffness = Math.max(0.01, Number(cfg.stiffness) || 170);
+  const damping = Math.max(0, Number(cfg.damping) || 0);
+  const initialVelocity = Number.isFinite(Number(cfg.velocity)) ? Number(cfg.velocity) : 0;
+  const restDelta = Math.max(0.0001, Number(cfg.restDelta) || 0.001);
+  const restSpeed = Math.max(0.0001, Number(cfg.restSpeed) || 0.01);
+  const maxDuration = Math.min(5000, Math.max(100, Number(cfg.maxDuration) || 2200));
+  const keys = new Set([...Object.keys(from), ...Object.keys(to)]);
+  const pairs = [];
+  for (const key of keys) {
+    const a = String(from[key] ?? to[key] ?? '0').trim();
+    const b = String(to[key] ?? from[key] ?? '0').trim();
+    const ma = a.match(NUMERIC_STYLE);
+    const mb = b.match(NUMERIC_STYLE);
+    if (ma && mb && ma[2] === mb[2]) {
+      pairs.push({ key, start: Number(ma[1]), end: Number(mb[1]), unit: ma[2] });
+    }
+  }
+  const dt = 1 / 120;
+  let position = 0;
+  let velocity = initialVelocity;
+  const samples = [0];
+  const maxSteps = Math.ceil(maxDuration / (dt * 1000));
+  for (let i = 0; i < maxSteps; i += 1) {
+    const acceleration = (-stiffness * (position - 1) - damping * velocity) / mass;
+    velocity += acceleration * dt;
+    position += velocity * dt;
+    samples.push(position);
+    if (Math.abs(1 - position) <= restDelta && Math.abs(velocity) <= restSpeed) break;
+  }
+  const last = samples.length - 1;
+  if (last === 0) samples.push(1);
+  samples[samples.length - 1] = 1;
+  const indexes = samples.map((_, index) => index);
+  return indexes.map((sampleIndex, index) => {
+    const progress = samples[sampleIndex];
+    const frame = { offset: index / Math.max(1, indexes.length - 1) };
+    for (const pair of pairs) {
+      const value = pair.start + (pair.end - pair.start) * progress;
+      frame[pair.key] = `${Number(value.toFixed(4))}${pair.unit}`;
+    }
+    if (index === indexes.length - 1) {
+      for (const key of keys) if (!pairs.some(pair => pair.key === key)) frame[key] = to[key] ?? from[key];
+    }
+    return frame;
+  });
+}
 
 export function prefersReducedMotion() {
   return globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
@@ -289,6 +393,31 @@ export function createMotionController({ events, getConfig = () => ({ respectRed
     });
   };
 
+  const spring = (target, from, to, options = {}) => {
+    const keyframes = createSpringKeyframes(from, to, options);
+    const duration = options.duration ?? Math.max(120, (keyframes.length - 1) * (1000 / 120));
+    return animate(target, keyframes, { ...options, duration, easing: 'linear', fill: options.fill ?? 'both' });
+  };
+
+  const sequence = (target, steps, options = {}) => {
+    if (!Array.isArray(steps)) throw new TypeError('sequence() requires an array of motion steps.');
+    let cancelled = false;
+    let active = null;
+    const finished = (async () => {
+      const results = [];
+      for (const step of steps) {
+        if (cancelled) break;
+        if (!step || typeof step !== 'object') throw new TypeError('Each sequence step must be an object.');
+        active = animate(target, step.motion ?? step.preset ?? step.keyframes, { ...options, ...(step.options ?? {}) });
+        const result = await active.finished;
+        results.push(result);
+        if (result.reason !== 'finish') break;
+      }
+      return results;
+    })();
+    return Object.freeze({ finished, cancel() { cancelled = true; active?.cancel(); } });
+  };
+
   const transition = (target, styles, options = {}) => {
     if (!styles || typeof styles !== 'object' || Array.isArray(styles)) {
       throw new TypeError('transition() requires a target style object.');
@@ -339,6 +468,8 @@ export function createMotionController({ events, getConfig = () => ({ respectRed
     animate,
     transition,
     stagger,
+    spring,
+    sequence,
     cancelAll,
     getActiveCount
   };
