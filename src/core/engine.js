@@ -5,13 +5,19 @@ import { createModuleRegistry } from './modules.js';
 import { designTokens } from '../design-system/tokens.js';
 import { createThemeController } from '../design-system/theme.js';
 import { createComponentRegistry } from '../components/registry.js';
+import { registerBuiltInComponents } from '../components/primitives.js';
 import { renderContent } from '../rendering/render.js';
 import { setLoading as applyLoading } from '../loading/loading.js';
-import { prefersReducedMotion, motionDuration } from '../motion/motion.js';
+import {
+  prefersReducedMotion,
+  motionDuration,
+  createMotionController
+} from '../motion/motion.js';
 import { delegate } from '../interactions/delegation.js';
+import { createInteractionController } from '../interactions/interactions.js';
 import { measure } from '../performance/measure.js';
 
-export const ENGINE_VERSION = '0.2.0';
+export const ENGINE_VERSION = '0.4.0';
 
 export function createCoreEngine(options = {}) {
   let events = createEventBus({
@@ -31,7 +37,6 @@ export function createCoreEngine(options = {}) {
   });
 
   let themeController = null;
-  const componentRegistry = createComponentRegistry();
 
   const ensureThemeController = () => {
     if (!themeController) {
@@ -50,6 +55,33 @@ export function createCoreEngine(options = {}) {
     }
     return themeController;
   };
+
+  const motionController = createMotionController({
+    events,
+    getConfig: () => configStore.get()
+  });
+
+  const interactionController = createInteractionController({
+    events
+  });
+
+  const componentRegistry = createComponentRegistry({
+    events,
+    getContext: () => ({
+      version: ENGINE_VERSION,
+      events,
+      config: configStore.get(),
+      tokens: themeController?.getTokens() ?? designTokens,
+      createComponent: (name, props) => componentRegistry.create(name, props),
+      animate: motionController.animate,
+      delegate,
+      trackPress: interactionController.trackPress
+    })
+  });
+
+  if (initialConfig.registerBuiltins) {
+    registerBuiltInComponents(componentRegistry);
+  }
 
   const getModuleContext = (moduleName) => ({
     moduleName,
@@ -106,11 +138,22 @@ export function createCoreEngine(options = {}) {
     modules.register({
       name: 'components',
       version: ENGINE_VERSION,
+      destroy() {
+        componentRegistry.unmountAll();
+      },
       api: {
         register: componentRegistry.register,
+        unregister: componentRegistry.unregister,
         create: componentRegistry.create,
+        mount: componentRegistry.mount,
+        update: componentRegistry.update,
+        unmount: componentRegistry.unmount,
+        unmountAll: componentRegistry.unmountAll,
+        hydrate: componentRegistry.hydrate,
         has: componentRegistry.has,
-        list: componentRegistry.list
+        list: componentRegistry.list,
+        describe: componentRegistry.describe,
+        getInstances: componentRegistry.getInstances
       }
     });
 
@@ -133,17 +176,41 @@ export function createCoreEngine(options = {}) {
     modules.register({
       name: 'motion',
       version: ENGINE_VERSION,
+      pause() {
+        motionController.cancelAll();
+      },
+      destroy() {
+        motionController.cancelAll();
+      },
       api: {
         prefersReducedMotion,
-        duration: motionDuration
+        duration: motionDuration,
+        animate: motionController.animate,
+        transition: motionController.transition,
+        stagger: motionController.stagger,
+        registerPreset: motionController.registerPreset,
+        getPreset: motionController.getPreset,
+        getPresets: motionController.getPresets,
+        cancelAll: motionController.cancelAll,
+        getActiveCount: motionController.getActiveCount
       }
     });
 
     modules.register({
       name: 'interactions',
       version: ENGINE_VERSION,
+      destroy() {
+        interactionController.destroyAll();
+      },
       api: {
-        delegate
+        delegate,
+        onAction: interactionController.onAction,
+        bindShortcuts: interactionController.bindShortcuts,
+        observeViewport: interactionController.observeViewport,
+        trackPress: interactionController.trackPress,
+        bindGesture: interactionController.bindGesture,
+        destroyAll: interactionController.destroyAll,
+        getActiveBindingsCount: interactionController.getActiveBindingsCount
       }
     });
 
@@ -339,21 +406,44 @@ export function createCoreEngine(options = {}) {
       return ensureThemeController().getContrast();
     },
 
-    // Component Registry API
+    // Component Engine API
     registerComponent: componentRegistry.register,
+    unregisterComponent: componentRegistry.unregister,
     createComponent: componentRegistry.create,
+    mountComponent: componentRegistry.mount,
+    updateComponent: componentRegistry.update,
+    unmountComponent: componentRegistry.unmount,
+    hydrateComponents: componentRegistry.hydrate,
     hasComponent: componentRegistry.has,
     getComponents: componentRegistry.list,
+    describeComponent: componentRegistry.describe,
+    getComponentInstances: componentRegistry.getInstances,
+
+    // Motion Engine API
+    prefersReducedMotion,
+    motionDuration,
+    animate: motionController.animate,
+    transition: motionController.transition,
+    stagger: motionController.stagger,
+    registerMotionPreset: motionController.registerPreset,
+    getMotionPreset: motionController.getPreset,
+    getMotionPresets: motionController.getPresets,
+    cancelAnimations: motionController.cancelAll,
+
+    // Interaction Engine API
+    delegate,
+    onAction: interactionController.onAction,
+    bindShortcuts: interactionController.bindShortcuts,
+    observeViewport: interactionController.observeViewport,
+    trackPress: interactionController.trackPress,
+    bindGesture: interactionController.bindGesture,
 
     // Rendering & Loading API
     render: renderContent,
     setLoading: applyLoading,
 
-    // Core Utilities API
-    delegate,
+    // Performance Utility
     measure,
-    prefersReducedMotion,
-    motionDuration,
 
     // Diagnostics & Introspection
     inspect() {
@@ -369,6 +459,15 @@ export function createCoreEngine(options = {}) {
         contrast: ctrl.getContrast(),
         modules: modules.inspect(),
         components: componentRegistry.list(),
+        mountedComponents: componentRegistry.getInstances(),
+        motion: {
+          presets: motionController.getPresets(),
+          activeAnimations: motionController.getActiveCount(),
+          reducedMotion: prefersReducedMotion()
+        },
+        interactions: {
+          activeBindings: interactionController.getActiveBindingsCount()
+        },
         events: {
           activeChannels: events.eventNames(),
           listenerCount: events.listenerCount()

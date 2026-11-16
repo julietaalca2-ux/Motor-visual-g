@@ -11,6 +11,7 @@ export const DEFAULT_CONFIG = Object.freeze({
   observeSystemTheme: true,
   respectReducedMotion: true,
   syncMetaThemeColor: true,
+  registerBuiltins: true,
   debug: false,
   autoStart: false,
   maxListeners: 100,
@@ -45,7 +46,7 @@ export function validateConfig(options = {}) {
     throw new TypeError('Config "storageKey" must be a string.');
   }
 
-  for (const flag of ['observeSystemTheme', 'respectReducedMotion', 'syncMetaThemeColor', 'debug', 'autoStart', 'strictLifecycle']) {
+  for (const flag of ['observeSystemTheme', 'respectReducedMotion', 'syncMetaThemeColor', 'registerBuiltins', 'debug', 'autoStart', 'strictLifecycle']) {
     if (flag in options && typeof options[flag] !== 'boolean') {
       throw new TypeError(`Config "${flag}" must be a boolean.`);
     }
