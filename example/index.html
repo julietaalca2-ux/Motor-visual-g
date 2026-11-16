@@ -8,15 +8,25 @@
   <link rel="stylesheet" href="../src/styles.css">
   <style>
     *{box-sizing:border-box} body{margin:0;background:var(--ogve-color-background);color:var(--ogve-color-text);font-family:var(--ogve-font-sans)}
-    .wrap{width:min(1040px,100%);margin:auto;padding:32px 20px 64px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--ogve-color-border);padding-bottom:20px}
+    .wrap{width:min(1080px,100%);margin:auto;padding:32px 20px 64px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--ogve-color-border);padding-bottom:20px}
     .brand{font-size:14px;font-weight:750;letter-spacing:.14em;color:var(--ogve-color-accent)}h1{font-size:clamp(34px,7vw,58px);line-height:1.03;margin:36px 0 14px;letter-spacing:-.045em}p{color:var(--ogve-color-muted);line-height:1.65}
     .telemetry{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--ogve-color-surface);border:1px solid var(--ogve-color-border);border-radius:var(--ogve-radius-lg);padding:14px 18px;margin-top:22px;box-shadow:var(--ogve-shadow-sm)}
     .telemetry-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--ogve-color-muted)}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,285px),1fr));gap:14px;margin-top:22px}.card{background:var(--ogve-color-surface);border:1px solid var(--ogve-color-border);border-radius:var(--ogve-radius-lg);padding:var(--ogve-card-padding, 20px);box-shadow:var(--ogve-shadow-md);display:flex;flex-direction:column;justify-content:space-between}
-    button{border:1px solid var(--ogve-color-border);background:var(--ogve-color-surface);color:var(--ogve-color-text);border-radius:999px;padding:var(--ogve-control-padding-y, 9px) var(--ogve-control-padding-x, 14px);font:inherit;font-size:13px;font-weight:650;cursor:pointer}button.primary{background:var(--ogve-color-accent);border-color:var(--ogve-color-accent);color:var(--ogve-color-accent-contrast, #fff)}button[aria-pressed="true"]{border-color:var(--ogve-color-accent);background:var(--ogve-color-accent-soft);color:var(--ogve-color-accent)}button:disabled{opacity:.45;cursor:not-allowed}button:focus-visible{outline:3px solid var(--ogve-color-accent);outline-offset:3px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
-    .swatch{height:9px;border-radius:9px;background:var(--ogve-color-accent);margin:14px 0}.muted{font-size:13px}.status{font-weight:700;color:var(--ogve-color-accent)}.sample{min-height:48px;display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin-top:22px}.card{background:var(--ogve-color-surface);border:1px solid var(--ogve-color-border);border-radius:var(--ogve-radius-lg);padding:var(--ogve-card-padding, 20px);box-shadow:var(--ogve-shadow-md);display:flex;flex-direction:column;justify-content:space-between}
+    .card--wide{grid-column:1 / -1}
+    .top button,.actions button{border:1px solid var(--ogve-color-border);background:var(--ogve-color-surface);color:var(--ogve-color-text);border-radius:999px;padding:var(--ogve-control-padding-y, 9px) var(--ogve-control-padding-x, 14px);font:inherit;font-size:13px;font-weight:650;cursor:pointer}.actions button.primary{background:var(--ogve-color-accent);border-color:var(--ogve-color-accent);color:var(--ogve-color-accent-contrast, #fff)}.top button[aria-pressed="true"]{border-color:var(--ogve-color-accent);background:var(--ogve-color-accent-soft);color:var(--ogve-color-accent)}button:disabled{opacity:.45;cursor:not-allowed}button:focus-visible{outline:3px solid var(--ogve-color-accent);outline-offset:3px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+    .swatch{height:9px;border-radius:9px;background:var(--ogve-color-accent);margin:14px 0}.muted{font-size:13px}.status{font-weight:700;color:var(--ogve-color-accent)}.sample{min-height:48px;display:flex;align-items:center;flex-wrap:wrap;gap:10px}
     .event-feed{font-family:var(--ogve-font-mono);font-size:12px;background:var(--ogve-color-background);border:1px solid var(--ogve-color-border);border-radius:var(--ogve-radius-md);padding:10px 12px;min-height:66px;max-height:92px;overflow:auto;color:var(--ogve-color-muted);line-height:1.5}
     .token-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+    .workbench{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px;margin-top:14px;align-items:start}
+    .showcase-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .motion-stage{display:flex;align-items:center;justify-content:center;min-height:92px;padding:16px;border-radius:var(--ogve-radius-md);border:1px dashed var(--ogve-color-border);background:var(--ogve-color-surface-subtle);margin-top:10px}
+    .motion-target{padding:12px 18px;border-radius:var(--ogve-radius-md);background:var(--ogve-color-accent);color:var(--ogve-color-accent-contrast,#fff);font-weight:700;font-size:13px;box-shadow:var(--ogve-shadow-sm)}
+    .stagger-list{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .stagger-item{padding:6px 12px;border-radius:var(--ogve-radius-pill);background:var(--ogve-color-surface-subtle);border:1px solid var(--ogve-color-border);font-size:12px;font-weight:650}
+    .gesture-pad{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:96px;padding:14px;border-radius:var(--ogve-radius-md);border:1px solid var(--ogve-color-border);background:var(--ogve-color-surface-subtle);text-align:center;margin-top:10px;touch-action:none;user-select:none;cursor:grab}
+    .gesture-pad[data-ogve-gesturing="true"]{border-color:var(--ogve-color-accent);background:var(--ogve-color-accent-soft)}
+    kbd{font-family:var(--ogve-font-mono);font-size:11px;padding:2px 6px;border-radius:6px;border:1px solid var(--ogve-color-border);background:var(--ogve-color-surface)}
   </style>
 </head>
 <body>
@@ -32,12 +42,12 @@
       </div>
     </header>
     <h1>Un motor visual.<br>Muchas experiencias.</h1>
-    <p>Demo independiente de ÖG Visual Engine. Probá los temas adaptativos, tokens dinámicos, densidad, contraste, ciclo de vida del núcleo, módulos, componentes y renderizado seguro.</p>
+    <p>Demo independiente de ÖG Visual Engine. Probá los temas adaptativos, el Component Engine, el motor de movimiento y gestos táctiles/atajos, y el ciclo de vida del núcleo.</p>
 
     <section class="telemetry" aria-label="Estado del núcleo">
       <div class="telemetry-meta">
         <span class="ogve-state-badge" id="core-state-badge" data-state="idle">idle</span>
-        <span id="core-metrics">Inicios: 0 · Módulos: 0 · Listeners: 0</span>
+        <span id="core-metrics">Inicios: 0 · Módulos: 0 · Componentes: 0 · Bindings: 0</span>
       </div>
       <div class="actions" style="margin:0">
         <button id="core-start" class="primary">Iniciar</button>
@@ -48,9 +58,74 @@
     </section>
 
     <div class="grid">
+      <section class="card card--wide" id="motion-interaction-root">
+        <div>
+          <div class="muted">01 / MOTION &amp; INTERACTION ENGINE</div>
+          <h2>Movimiento adaptativo, gestos y atajos</h2>
+          <p>Presets de animación respetando <code>prefers-reduced-motion</code>, entradas escalonadas (<code>stagger</code>), acciones declarativas <code>data-ogve-action</code>, gestos de puntero/táctiles y atajos (<kbd>Alt+M</kbd>).</p>
+          <div class="workbench">
+            <div>
+              <div class="motion-stage">
+                <div class="motion-target" id="motion-target">Elemento animado ÖG</div>
+              </div>
+              <div class="actions">
+                <button data-ogve-action="animate" data-ogve-payload="slide-up" class="primary">Slide Up</button>
+                <button data-ogve-action="animate" data-ogve-payload="scale-in">Scale In</button>
+                <button data-ogve-action="animate" data-ogve-payload="pulse">Pulse</button>
+                <button data-ogve-action="animate" data-ogve-payload="shake">Shake</button>
+                <button data-ogve-action="stagger">Stagger Lista</button>
+              </div>
+              <div class="stagger-list" id="stagger-list">
+                <span class="stagger-item">01 · Core</span>
+                <span class="stagger-item">02 · Tokens</span>
+                <span class="stagger-item">03 · Components</span>
+                <span class="stagger-item">04 · Motion</span>
+              </div>
+            </div>
+            <div>
+              <div class="gesture-pad ogve-interactive" id="gesture-pad" tabindex="0">
+                <strong>Zona de Gestos y Presión</strong>
+                <span class="muted" id="gesture-status">Deslizá (swipe), tocá (tap) o mantené presionado (long press)</span>
+              </div>
+              <div class="actions">
+                <button id="press-feedback-btn" class="ogve-interactive">Botón con trackPress()</button>
+                <span class="muted" id="press-status">Presiones: 0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="muted" id="motion-summary" style="margin-top:12px"></div>
+      </section>
+
+      <section class="card card--wide">
+        <div>
+          <div class="muted">02 / COMPONENT ENGINE — PRIMITIVES &amp; LIFECYCLE</div>
+          <h2>Motor de componentes y primitivas nativas</h2>
+          <p>Componentes modulares (<code>og-button</code>, <code>og-badge</code>, <code>og-card</code>, <code>og-input</code>, <code>og-alert</code>, <code>og-avatar</code>) con montaje administrado, actualización reactiva de props e hidratación declarativa desde HTML.</p>
+          <div class="workbench">
+            <div>
+              <div class="showcase-row" id="primitives-strip"></div>
+              <div style="margin-top:12px" id="mounted-input-slot"></div>
+              <div style="margin-top:12px" id="mounted-alert-slot"></div>
+              <div class="actions">
+                <button id="update-mounted" class="primary">Actualizar instancia montada</button>
+                <button id="toggle-alert-tone">Alternar alerta</button>
+              </div>
+            </div>
+            <div id="mounted-card-slot"></div>
+          </div>
+          <div class="showcase-row" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--ogve-color-border)">
+            <span class="muted">Hidratación declarativa:</span>
+            <span data-ogve-component="og-badge" data-ogve-prop-label="Auto-hidratado" data-ogve-prop-tone="success" data-ogve-prop-dot="true"></span>
+            <span data-ogve-component="og-avatar" data-ogve-prop-name="Julieta Alca" data-ogve-prop-size="sm" data-ogve-prop-status="online"></span>
+          </div>
+        </div>
+        <div class="muted" id="component-count" style="margin-top:12px"></div>
+      </section>
+
       <section class="card">
         <div>
-          <div class="muted">01 / DESIGN SYSTEM</div>
+          <div class="muted">03 / DESIGN SYSTEM</div>
           <h2>Temas adaptativos</h2>
           <p>Soporta claro, oscuro, sistema y presets extensibles sincronizados con el DOM y <code>meta[name="theme-color"]</code>.</p>
           <div class="swatch"></div>
@@ -61,7 +136,7 @@
 
       <section class="card">
         <div>
-          <div class="muted">02 / TOKENS &amp; ERGONOMICS</div>
+          <div class="muted">04 / TOKENS &amp; ERGONOMICS</div>
           <h2>Tokens y ergonomía</h2>
           <p>Personalizá el acento en vivo, alterná densidad espacial y modo de alto contraste.</p>
           <div class="actions">
@@ -80,52 +155,34 @@
 
       <section class="card">
         <div>
-          <div class="muted">03 / COMPONENT ENGINE</div>
-          <h2>Componentes</h2>
-          <p>Registrá una fábrica y creá elementos reutilizables.</p>
-          <div class="sample" id="component-output">Componente de ejemplo</div>
-        </div>
-        <div class="muted" id="component-count"></div>
-      </section>
-
-      <section class="card">
-        <div>
-          <div class="muted">04 / RENDER ENGINE</div>
-          <h2>Renderizado</h2>
-          <p>El motor inserta texto como texto, sin interpretar HTML arbitrario.</p>
+          <div class="muted">05 / RENDER ENGINE &amp; LOADING</div>
+          <h2>Renderizado y carga</h2>
+          <p>Inserta texto seguro sin HTML arbitrario y administra estados accesibles ARIA.</p>
           <div class="sample" id="render-output">Esperando acción…</div>
+          <div class="sample" id="loading-output">Listo para probar</div>
         </div>
-        <div class="actions"><button id="render">Probar renderizado</button></div>
+        <div class="actions">
+          <button id="render">Probar renderizado</button>
+          <button id="loading" class="primary">Probar carga</button>
+        </div>
       </section>
 
       <section class="card">
         <div>
-          <div class="muted">05 / LOADING &amp; MODULES</div>
-          <h2>Carga y módulos</h2>
-          <p>Estados accesibles ARIA y registro de módulos con dependencias verificadas.</p>
-          <div class="sample" id="loading-output">Listo para probar</div>
+          <div class="muted">06 / EVENT BUS &amp; MODULES</div>
+          <h2>Eventos, módulos y configuración</h2>
+          <p>Observá el flujo de eventos del núcleo y registrá módulos en caliente.</p>
+          <div class="event-feed" id="event-log" aria-live="polite">Esperando eventos…</div>
           <div class="muted" id="module-output" style="margin-top:8px">Módulos base activos</div>
         </div>
         <div class="actions">
-          <button id="loading" class="primary">Probar carga</button>
           <button id="register-module">Registrar módulo</button>
-        </div>
-      </section>
-
-      <section class="card">
-        <div>
-          <div class="muted">06 / EVENT BUS &amp; CONFIG</div>
-          <h2>Eventos y configuración</h2>
-          <p>Observá el flujo de eventos del núcleo y actualizá opciones en vivo.</p>
-          <div class="event-feed" id="event-log" aria-live="polite">Esperando eventos…</div>
-        </div>
-        <div class="actions">
           <button id="toggle-debug">Debug: OFF</button>
           <button id="emit-ping">Emitir evento</button>
         </div>
       </section>
     </div>
-    <p class="muted" style="margin-top:28px">ÖG Visual Engine · versión 0.2.0 · Fase 2: Design System &amp; Adaptive Themes</p>
+    <p class="muted" style="margin-top:28px">ÖG Visual Engine · versión 0.4.0 · Fase 4: Motion &amp; Interaction Engine</p>
   </main>
   <script type="module">
     import { createVisualEngine } from '../src/index.js';
@@ -173,7 +230,9 @@
       const badge = $('core-state-badge');
       badge.textContent = snap.state;
       badge.setAttribute('data-state', snap.state);
-      $('core-metrics').textContent = `Inicios: ${snap.metrics.startCount} · Módulos: ${snap.modules.length} · Listeners: ${snap.events.listenerCount}`;
+      $('core-metrics').textContent = `Inicios: ${snap.metrics.startCount} · Módulos: ${snap.modules.length} · Componentes: ${snap.components.length} · Bindings: ${snap.interactions.activeBindings}`;
+      $('component-count').textContent = `Componentes registrados (${snap.components.length}): ${snap.components.join(', ')} · Instancias montadas: ${snap.mountedComponents.length}`;
+      $('motion-summary').textContent = `Presets de movimiento (${snap.motion.presets.length}): ${snap.motion.presets.join(', ')} · Reduced Motion: ${snap.motion.reducedMotion ? 'Activo' : 'Normal'}`;
       $('core-start').disabled = snap.state === 'ready' || snap.state === 'paused';
       $('core-pause').disabled = snap.state !== 'ready';
       $('core-resume').disabled = snap.state !== 'paused';
@@ -217,9 +276,133 @@
     $('core-resume').addEventListener('click', () => { engine.resume(); syncTelemetry(); });
     $('core-restart').addEventListener('click', () => { engine.restart(); syncTelemetry(); });
 
-    engine.registerComponent('demo-chip', ({label='ÖG Component'}) => { const el=document.createElement('span'); el.textContent=label; el.style.cssText='display:inline-block;padding:9px 13px;border-radius:999px;background:var(--ogve-color-accent);color:var(--ogve-color-accent-contrast,#fff);font-weight:700'; return el; });
-    $('component-output').replaceChildren(engine.createComponent('demo-chip',{label:'Componente creado'}));
-    $('component-count').textContent=`Componentes registrados: ${engine.getComponents().length}`;
+    // Fase 4: Motion & Interaction Engine bindings
+    const motionTarget = $('motion-target');
+    const staggerItems = document.querySelectorAll('#stagger-list .stagger-item');
+
+    engine.onAction($('motion-interaction-root'), {
+      animate: ({ payload }) => {
+        const preset = payload || 'pulse';
+        motionTarget.textContent = `Preset: ${preset}`;
+        engine.animate(motionTarget, preset);
+      },
+      stagger: () => {
+        engine.stagger(staggerItems, 'slide-up', { staggerMs: 65 });
+      }
+    });
+
+    engine.bindShortcuts(document, {
+      'Alt+M': () => {
+        motionTarget.textContent = 'Atajo Alt+M activado';
+        engine.animate(motionTarget, 'pulse');
+      }
+    });
+
+    let pressCount = 0;
+    engine.trackPress($('press-feedback-btn'), {
+      onPress: () => {
+        pressCount += 1;
+        $('press-status').textContent = `Presiones: ${pressCount}`;
+        engine.animate($('press-feedback-btn'), 'pulse');
+      }
+    });
+
+    engine.bindGesture($('gesture-pad'), {
+      onSwipe: ({ direction, dx, dy }) => {
+        $('gesture-status').textContent = `Swipe detectado: ${direction.toUpperCase()} (dx: ${Math.round(dx)}px, dy: ${Math.round(dy)}px)`;
+        engine.animate($('gesture-pad'), direction === 'left' || direction === 'right' ? 'pulse' : 'slide-up');
+      },
+      onTap: () => {
+        $('gesture-status').textContent = 'Tap detectado en la zona de gestos';
+        engine.animate($('gesture-pad'), 'scale-in');
+      },
+      onLongPress: () => {
+        $('gesture-status').textContent = 'Long Press detectado (450ms)';
+        engine.animate($('gesture-pad'), 'shake');
+      }
+    });
+
+    engine.observeViewport(staggerItems, (entry) => {
+      engine.animate(entry.target, 'fade-in');
+    });
+
+    // Fase 3: Component Engine showcase
+    engine.registerComponent('demo-chip', {
+      defaults: { label: 'ÖG Component' },
+      setup({ label }) {
+        const el = document.createElement('span');
+        el.textContent = label;
+        el.style.cssText = 'display:inline-block;padding:6px 12px;border-radius:999px;background:var(--ogve-color-accent);color:var(--ogve-color-accent-contrast,#fff);font-size:12px;font-weight:700';
+        return el;
+      }
+    });
+
+    let clickCounter = 0;
+    const primaryBtn = engine.createComponent('og-button', {
+      variant: 'primary',
+      label: 'Botón Primario (0)',
+      onClick: () => {
+        clickCounter += 1;
+        primaryBtn.querySelector('.ogve-btn__label').textContent = `Botón Primario (${clickCounter})`;
+        engine.animate(primaryBtn, 'pulse');
+      }
+    });
+
+    $('primitives-strip').replaceChildren(
+      engine.createComponent('og-avatar', { name: 'ÖG Engine', status: 'online' }),
+      primaryBtn,
+      engine.createComponent('og-badge', { label: 'v0.4.0 Ready', tone: 'accent', dot: true }),
+      engine.createComponent('demo-chip', { label: 'Custom Chip' })
+    );
+
+    const cardHandle = engine.mountComponent('og-card', $('mounted-card-slot'), {
+      eyebrow: 'INSTANCIA MONTADA',
+      title: 'Tarjeta reactiva ÖG',
+      subtitle: 'Administrada por mountComponent() y updateComponent()',
+      body: 'Este componente responde a los temas, densidad y alto contraste sin dependencias externas.',
+      elevated: true,
+      footer: [
+        engine.createComponent('og-badge', { label: 'Modular', tone: 'success' }),
+        engine.createComponent('og-badge', { label: 'Accesible', tone: 'neutral' })
+      ]
+    });
+
+    let updateStep = 0;
+    $('update-mounted').addEventListener('click', () => {
+      updateStep += 1;
+      cardHandle.update({
+        title: `Tarjeta actualizada #${updateStep}`,
+        body: `Actualización reactiva ejecutada (${new Date().toLocaleTimeString()}) conservando el ciclo de vida de la instancia.`
+      });
+      engine.animate(cardHandle.element, 'fade-in');
+      syncTelemetry();
+    });
+
+    const alertTones = [
+      { tone: 'info', title: 'Component Engine activo', message: 'Todas las primitivas usan tokens --ogve-* y atributos ARIA.' },
+      { tone: 'success', title: 'Validación completada', message: 'El ciclo de vida y limpieza de listeners están sincronizados.' },
+      { tone: 'warning', title: 'Modo demostración', message: 'Probá alternar temas y densidades desde la barra superior.' }
+    ];
+    let alertIdx = 0;
+    const alertHandle = engine.mountComponent('og-alert', $('mounted-alert-slot'), alertTones[0]);
+    $('toggle-alert-tone').addEventListener('click', () => {
+      alertIdx = (alertIdx + 1) % alertTones.length;
+      alertHandle.update(alertTones[alertIdx]);
+    });
+
+    engine.mountComponent('og-input', $('mounted-input-slot'), {
+      label: 'Nombre de experiencia',
+      placeholder: 'Escribí para actualizar el subtítulo de la tarjeta…',
+      hint: 'Entrada vinculada en tiempo real a cardHandle.update()',
+      onInput: (val) => {
+        cardHandle.update({
+          subtitle: val.trim() ? `Experiencia: ${val.trim()}` : 'Administrada por mountComponent() y updateComponent()'
+        });
+      }
+    });
+
+    engine.hydrateComponents(document);
+
     $('render').addEventListener('click',()=>engine.render($('render-output'),'¡Renderizado correctamente por ÖG!'));
     $('loading').addEventListener('click',()=>{const target=$('loading-output');const active=target.getAttribute('aria-busy')!=='true';engine.setLoading(target,active, 'Procesando…');target.firstChild?.remove();target.textContent=active?'Carga activada':'Carga finalizada';});
 
@@ -228,7 +411,7 @@
         engine.use({
           name: 'telemetry-badge',
           version: '1.0.0',
-          dependencies: ['theme', 'components'],
+          dependencies: ['theme', 'components', 'motion', 'interactions'],
           api: (ctx) => ({
             summary: () => `Módulo "${ctx.moduleName}" activo (${ctx.lifecycle.getState()})`
           })
