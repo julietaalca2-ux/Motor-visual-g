@@ -92,17 +92,11 @@ export function createThemeController({
 
   const syncInlineCssVars = () => {
     if (!root?.style) return;
-    const { theme, colorScheme, isCustom } = resolveState();
-    const hasOverrides = Object.keys(tokenOverrides).length > 0;
-
-    if (!isCustom && !hasOverrides) {
-      for (const prop of appliedCustomVars) {
-        root.style.removeProperty(prop);
-      }
-      appliedCustomVars.clear();
-      return;
-    }
-
+    // Always write the effective token set to the root element. Relying only on
+    // theme-selector CSS made the controller appear inert in hosts that loaded
+    // the engine module but missed (or scoped) the optional theme stylesheet.
+    // Inline variables make light, dark, system and preset changes deterministic.
+    const { colorScheme } = resolveState();
     const { tokens } = getEffectiveTokens();
     const nextVars = tokensToCssVars(tokens, { theme: colorScheme });
 
