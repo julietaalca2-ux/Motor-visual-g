@@ -37,3 +37,7 @@ card.unmount();
 // <div data-ogve-component="og-badge" data-ogve-prop-label="Activo" data-ogve-prop-tone="success"></div>
 engine.hydrateComponents(document);
 ```
+
+## Social components (0.5.0)
+
+`og-post`, `og-reaction`, `og-story-ring` and `og-comment` are registered as built-ins. They are presentation components: callbacks let the host application connect navigation, persistence, media viewers, and backend services without coupling those concerns to the engine.
