@@ -1,5 +1,6 @@
 @import url('../themes/tokens.css');
 @import url('../themes/presets.css');
+@import url('./components/components.css');
 
 :root {
   color-scheme: light dark;
@@ -70,12 +71,30 @@
   border: 1px solid var(--ogve-color-border);
 }
 
+.ogve-interactive {
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+[data-ogve-pressed="true"] {
+  transform: scale(0.975);
+}
+
 @media (prefers-reduced-motion: no-preference) {
-  [data-ogve-transition] {
+  [data-ogve-transition],
+  .ogve-interactive {
     transition:
       background-color var(--ogve-motion-normal) var(--ogve-motion-easing-standard, ease),
       color var(--ogve-motion-normal) var(--ogve-motion-easing-standard, ease),
       border-color var(--ogve-motion-normal) var(--ogve-motion-easing-standard, ease),
-      box-shadow var(--ogve-motion-normal) var(--ogve-motion-easing-standard, ease);
+      box-shadow var(--ogve-motion-normal) var(--ogve-motion-easing-standard, ease),
+      transform var(--ogve-motion-fast, 120ms) var(--ogve-motion-easing-standard, ease);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-ogve-pressed="true"] {
+    transform: none;
   }
 }
