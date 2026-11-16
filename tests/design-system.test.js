@@ -131,7 +131,7 @@ test('createVisualEngine integrates Fase 2 design system API end-to-end', () => 
     syncMetaThemeColor: false
   }).start();
 
-  assert.equal(engine.version, '0.4.0');
+  assert.equal(engine.version, '0.6.0');
   assert.equal(engine.getTheme().theme, 'warm-paper');
   assert.equal(engine.getTheme().colorScheme, 'light');
   assert.equal(engine.getDensity(), 'spacious');

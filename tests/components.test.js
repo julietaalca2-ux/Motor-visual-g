@@ -196,7 +196,7 @@ test('built-in primitives render accessible DOM structures and integrate with cr
       syncMetaThemeColor: false
     }).start();
 
-    assert.equal(engine.version, '0.4.0');
+    assert.equal(engine.version, '0.6.0');
     for (const def of BUILT_IN_COMPONENTS) {
       assert.equal(engine.hasComponent(def.name), true);
     }
@@ -271,6 +271,40 @@ test('hydrateComponents mounts declarative data-ogve-component hosts', () => {
     const hydrated = registry.hydrate(root);
     assert.equal(hydrated.length, 1);
     assert.equal(host.children[0].textContent, 'Declarativo');
+  } finally {
+    globalThis.document = prevDoc;
+  }
+});
+
+test('social built-ins expose post, reaction, story and comment primitives', () => {
+  const prevDoc = globalThis.document;
+  const doc = createMockDocument();
+  globalThis.document = doc;
+  try {
+    const engine = createVisualEngine({ observeSystemTheme: false, syncMetaThemeColor: false }).start();
+    for (const name of ['og-post', 'og-reaction', 'og-story-ring', 'og-comment']) {
+      assert.equal(engine.hasComponent(name), true);
+    }
+
+    let reactionState = null;
+    const reaction = engine.createComponent('og-reaction', {
+      count: 7,
+      onChange: (state) => { reactionState = state; }
+    });
+    reaction.dispatchEvent({ type: 'click' });
+    assert.deepEqual(reactionState && { active: reactionState.active, count: reactionState.count }, { active: true, count: 8 });
+    assert.equal(reaction.getAttribute('aria-pressed'), 'true');
+
+    const post = engine.createComponent('og-post', { author: 'ÖG', content: 'Hola comunidad', likes: 12 });
+    assert.equal(post.getAttribute('data-ogve-component'), 'og-post');
+    assert.match(post.textContent, /Hola comunidad/);
+
+    const story = engine.createComponent('og-story-ring', { name: 'Ana', seen: true });
+    assert.equal(story.getAttribute('data-ogve-seen'), 'true');
+
+    const comment = engine.createComponent('og-comment', { author: 'Luis', text: 'Buen post' });
+    assert.match(comment.textContent, /Buen post/);
+    engine.destroy();
   } finally {
     globalThis.document = prevDoc;
   }

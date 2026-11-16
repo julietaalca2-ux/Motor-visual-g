@@ -5,6 +5,8 @@ import {
   createMotionController,
   createInteractionController,
   MOTION_PRESETS,
+  SPRING_PRESETS,
+  createSpringKeyframes,
   motionDuration,
   parseDurationMs
 } from '../src/index.js';
@@ -21,6 +23,7 @@ function createEventTargetMock(tagName = 'DIV') {
     tagName: tagName.toUpperCase(),
     parentNode: null,
     children,
+    __listeners: listeners,
     style: {
       setProperty(k, v) { styles.set(k, String(v)); },
       getPropertyValue(k) { return styles.get(k) ?? ''; },
@@ -44,8 +47,13 @@ function createEventTargetMock(tagName = 'DIV') {
         stopPropagation() { payload.propagationStopped = true; },
         ...event
       };
-      for (const fn of [...(listeners.get(event.type) ?? [])]) {
-        fn(payload);
+      let current = el;
+      while (current) {
+        for (const fn of [...(current._listeners?.get(event.type) ?? current.__listeners?.get(event.type) ?? [])]) {
+          fn(payload);
+        }
+        if (payload.propagationStopped) break;
+        current = current.parentNode;
       }
       return payload;
     },
@@ -199,7 +207,7 @@ test('createVisualEngine integrates motion and interactions across lifecycle', a
     respectReducedMotion: false
   }).start();
 
-  assert.equal(engine.version, '0.4.0');
+  assert.equal(engine.version, '0.6.0');
   const box = createEventTargetMock('DIV');
   await engine.animate(box, 'slide-up', { duration: 10 }).finished;
   assert.equal(box.style.opacity, '1');
@@ -220,4 +228,37 @@ test('createVisualEngine integrates motion and interactions across lifecycle', a
 
   engine.destroy();
   assert.equal(engine.inspect().interactions.activeBindings, 0);
+});
+
+
+test('spring physics generates stable keyframes and engine exposes spring + sequence', async () => {
+  const frames = createSpringKeyframes(
+    { opacity: 0, transform: 'translateY(16px)' },
+    { opacity: 1, transform: 'translateY(0px)' },
+    { preset: 'snappy' }
+  );
+  assert.ok(frames.length > 2);
+  assert.equal(frames[0].opacity, '0');
+  assert.equal(frames.at(-1).opacity, '1');
+  assert.equal(frames.at(-1).transform, 'translateY(0px)');
+  assert.deepEqual(Object.keys(SPRING_PRESETS).sort(), ['bouncy', 'gentle', 'snappy', 'standard']);
+  assert.throws(() => createSpringKeyframes({}, {}, { preset: 'unknown' }), /Unknown spring preset/);
+
+  const engine = createVisualEngine({ respectReducedMotion: false }).start();
+  const target = createEventTargetMock('DIV');
+  const springHandle = engine.spring(target, { opacity: 0 }, { opacity: 1 }, { preset: 'snappy', duration: 10 });
+  const springResult = await springHandle.finished;
+  assert.equal(springResult.reason, 'finish');
+  assert.equal(target.style.opacity, '1');
+
+  const sequenceHandle = engine.sequence(target, [
+    { motion: 'fade-in', options: { duration: 5 } },
+    { motion: 'pulse', options: { duration: 5 } }
+  ]);
+  const sequenceResults = await sequenceHandle.finished;
+  assert.equal(sequenceResults.length, 2);
+  assert.ok(sequenceResults.every(result => result.reason === 'finish'));
+  assert.ok(engine.getMotionPresets().includes('reaction-pop'));
+  assert.ok(engine.getMotionPresets().includes('post-enter'));
+  engine.destroy();
 });

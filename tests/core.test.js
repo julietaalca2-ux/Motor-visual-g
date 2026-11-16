@@ -21,7 +21,7 @@ test('config resolves defaults, validates types, and updates reactively', () => 
   assert.equal(cfg.debug, true);
   assert.equal(cfg.attribute, DEFAULT_CONFIG.attribute);
 
-  assert.throws(() => validateConfig({ theme: 'neon' }), TypeError);
+  assert.throws(() => validateConfig({ theme: 'Neon Theme' }), TypeError);
   assert.throws(() => validateConfig({ maxListeners: 0 }), RangeError);
   assert.throws(() => validateConfig({ debug: 'yes' }), TypeError);
 
@@ -169,7 +169,7 @@ test('module registry resolves dependencies topologically and detects cycles', (
 // --- 5. Integrated Core Engine Public API tests ---
 test('createVisualEngine integrates lifecycle, config, events, modules, and backwards-compatible API', () => {
   const engine = createVisualEngine({ theme: 'dark' });
-  assert.equal(engine.version, '0.4.0');
+  assert.equal(engine.version, '0.6.0');
   assert.equal(engine.getState(), 'idle');
 
   const eventsSeen = [];
