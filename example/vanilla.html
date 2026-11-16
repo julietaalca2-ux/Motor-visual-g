@@ -8,7 +8,10 @@
   <style>
     body { margin: 0; min-height: 100vh; padding: 2rem; background: var(--ogve-color-background); color: var(--ogve-color-text); }
     main { max-width: 42rem; margin: 4rem auto; padding: 2rem; border: 1px solid var(--ogve-color-border); border-radius: var(--ogve-radius-lg); background: var(--ogve-color-surface); }
-    button { padding: .75rem 1rem; border: 0; border-radius: var(--ogve-radius-md); background: var(--ogve-color-accent); color: white; }
+    button { padding: .75rem 1rem; border: 0; border-radius: var(--ogve-radius-md); background: var(--ogve-color-accent); color: white; cursor: pointer; margin: .25rem .25rem .25rem 0; }
+    .demo-card { margin-top: 1.5rem; padding: 1.25rem; border: 1px solid var(--ogve-color-border); border-radius: var(--ogve-radius-md); background: var(--ogve-color-surface-subtle); }
+    .demo-dot { display: inline-grid; place-items: center; width: 3rem; height: 3rem; border-radius: 50%; background: var(--ogve-color-accent-soft); color: var(--ogve-color-accent); font-size: 1.5rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: 1rem; }
   </style>
 </head>
 <body>
@@ -17,16 +20,41 @@
     <p>Demo independiente del motor visual.</p>
     <button id="theme-toggle" type="button">Cambiar tema</button>
     <p id="status" aria-live="polite"></p>
+    <section class="demo-card" aria-labelledby="motion-title">
+      <h2 id="motion-title">Advanced Motion 2.0</h2>
+      <p>Prueba física de resorte y presets sociales sin conexión a ninguna aplicación externa.</p>
+      <div id="motion-target" class="demo-dot" aria-label="Elemento animado">✦</div>
+      <div class="actions">
+        <button id="spring-demo" type="button">Spring bouncy</button>
+        <button id="reaction-demo" type="button">Reaction pop</button>
+        <button id="sequence-demo" type="button">Sequence</button>
+      </div>
+    </section>
   </main>
   <script type="module">
     import { createVisualEngine } from '../src/index.js';
     const engine = createVisualEngine({ theme: 'system' }).start();
     const status = document.querySelector('#status');
+    const target = document.querySelector('#motion-target');
     const update = () => { status.textContent = `Tema activo: ${engine.getTheme().theme}`; };
     engine.on('themechange', update);
     document.querySelector('#theme-toggle').addEventListener('click', () => {
       engine.setTheme(engine.getTheme().theme === 'dark' ? 'light' : 'dark');
       update();
+    });
+    document.querySelector('#spring-demo').addEventListener('click', async () => {
+      await engine.spring(target, { transform: 'translateY(0px) scale(1)', opacity: 0.65 }, { transform: 'translateY(-18px) scale(1.12)', opacity: 1 }, { preset: 'bouncy' }).finished;
+      await engine.spring(target, { transform: 'translateY(-18px) scale(1.12)' }, { transform: 'translateY(0px) scale(1)' }, { preset: 'snappy' }).finished;
+    });
+    document.querySelector('#reaction-demo').addEventListener('click', () => {
+      engine.animate(target, 'reaction-pop');
+    });
+    document.querySelector('#sequence-demo').addEventListener('click', () => {
+      engine.sequence(target, [
+        { motion: 'fade-out', options: { duration: 140 } },
+        { motion: 'scale-in', options: { duration: 260 } },
+        { motion: 'pulse', options: { duration: 300 } }
+      ]);
     });
     update();
   </script>
