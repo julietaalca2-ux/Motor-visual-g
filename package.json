@@ -1,12 +1,20 @@
 {
   "name": "@og/visual-engine",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Independent adaptive visual engine for ÖG applications",
   "type": "module",
   "main": "./src/index.js",
   "module": "./src/index.js",
-  "exports": { ".": "./src/index.js", "./styles.css": "./src/styles.css" },
-  "scripts": { "test": "node --test", "check": "node --check src/index.js" },
+  "exports": {
+    ".": "./src/index.js",
+    "./styles.css": "./src/styles.css",
+    "./themes/tokens.css": "./themes/tokens.css",
+    "./themes/presets.css": "./themes/presets.css"
+  },
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check src/index.js src/core/config.js src/core/events.js src/core/lifecycle.js src/core/modules.js src/core/engine.js src/design-system/tokens.js src/design-system/presets.js src/design-system/theme.js"
+  },
   "keywords": ["og", "visual-engine", "design-system", "ui"],
   "license": "MIT"
 }
