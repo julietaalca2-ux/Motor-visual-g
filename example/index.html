@@ -5,44 +5,251 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#fbf8fc">
   <title>ÖG Visual Engine — Demo</title>
-  <link rel="stylesheet" href="./src/styles.css">
+  <link rel="stylesheet" href="../src/styles.css">
   <style>
-    *{box-sizing:border-box} body{margin:0;background:var(--ogve-color-background);color:var(--ogve-color-text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif}
-    .wrap{width:min(920px,100%);margin:auto;padding:32px 20px 64px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--ogve-color-border);padding-bottom:20px}
+    *{box-sizing:border-box} body{margin:0;background:var(--ogve-color-background);color:var(--ogve-color-text);font-family:var(--ogve-font-sans)}
+    .wrap{width:min(1040px,100%);margin:auto;padding:32px 20px 64px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--ogve-color-border);padding-bottom:20px}
     .brand{font-size:14px;font-weight:750;letter-spacing:.14em;color:var(--ogve-color-accent)}h1{font-size:clamp(34px,7vw,58px);line-height:1.03;margin:36px 0 14px;letter-spacing:-.045em}p{color:var(--ogve-color-muted);line-height:1.65}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:14px;margin-top:28px}.card{background:var(--ogve-color-surface);border:1px solid var(--ogve-color-border);border-radius:var(--ogve-radius-lg);padding:20px;box-shadow:0 8px 28px #00000008}
-    button{border:1px solid var(--ogve-color-border);background:var(--ogve-color-surface);color:var(--ogve-color-text);border-radius:999px;padding:11px 16px;font:inherit;font-weight:650;cursor:pointer}button.primary{background:var(--ogve-color-accent);border-color:var(--ogve-color-accent);color:white}button:focus-visible{outline:3px solid var(--ogve-color-accent);outline-offset:3px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
-    .swatch{height:9px;border-radius:9px;background:var(--ogve-color-accent);margin:16px 0}.muted{font-size:13px}.status{font-weight:700;color:var(--ogve-color-accent)}.sample{min-height:48px;display:flex;align-items:center}
+    .telemetry{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--ogve-color-surface);border:1px solid var(--ogve-color-border);border-radius:var(--ogve-radius-lg);padding:14px 18px;margin-top:22px;box-shadow:var(--ogve-shadow-sm)}
+    .telemetry-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--ogve-color-muted)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,285px),1fr));gap:14px;margin-top:22px}.card{background:var(--ogve-color-surface);border:1px solid var(--ogve-color-border);border-radius:var(--ogve-radius-lg);padding:var(--ogve-card-padding, 20px);box-shadow:var(--ogve-shadow-md);display:flex;flex-direction:column;justify-content:space-between}
+    button{border:1px solid var(--ogve-color-border);background:var(--ogve-color-surface);color:var(--ogve-color-text);border-radius:999px;padding:var(--ogve-control-padding-y, 9px) var(--ogve-control-padding-x, 14px);font:inherit;font-size:13px;font-weight:650;cursor:pointer}button.primary{background:var(--ogve-color-accent);border-color:var(--ogve-color-accent);color:var(--ogve-color-accent-contrast, #fff)}button[aria-pressed="true"]{border-color:var(--ogve-color-accent);background:var(--ogve-color-accent-soft);color:var(--ogve-color-accent)}button:disabled{opacity:.45;cursor:not-allowed}button:focus-visible{outline:3px solid var(--ogve-color-accent);outline-offset:3px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+    .swatch{height:9px;border-radius:9px;background:var(--ogve-color-accent);margin:14px 0}.muted{font-size:13px}.status{font-weight:700;color:var(--ogve-color-accent)}.sample{min-height:48px;display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+    .event-feed{font-family:var(--ogve-font-mono);font-size:12px;background:var(--ogve-color-background);border:1px solid var(--ogve-color-border);border-radius:var(--ogve-radius-md);padding:10px 12px;min-height:66px;max-height:92px;overflow:auto;color:var(--ogve-color-muted);line-height:1.5}
+    .token-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
   </style>
 </head>
 <body>
   <main class="wrap" data-ogve-transition>
-    <header class="top"><div class="brand">ÖG / VISUAL ENGINE</div><div class="actions" style="margin:0"><button id="light">Claro</button><button id="dark">Oscuro</button><button id="system">Sistema</button></div></header>
+    <header class="top">
+      <div class="brand">ÖG / VISUAL ENGINE</div>
+      <div class="actions" style="margin:0">
+        <button id="light" data-theme-btn="light">Claro</button>
+        <button id="dark" data-theme-btn="dark">Oscuro</button>
+        <button id="system" data-theme-btn="system">Sistema</button>
+        <button id="midnight" data-theme-btn="midnight">Midnight</button>
+        <button id="warm-paper" data-theme-btn="warm-paper">Warm Paper</button>
+      </div>
+    </header>
     <h1>Un motor visual.<br>Muchas experiencias.</h1>
-    <p>Demo independiente de ÖG Visual Engine. Probá los temas, el registro de componentes, el renderizado seguro y los estados de carga.</p>
+    <p>Demo independiente de ÖG Visual Engine. Probá los temas adaptativos, tokens dinámicos, densidad, contraste, ciclo de vida del núcleo, módulos, componentes y renderizado seguro.</p>
+
+    <section class="telemetry" aria-label="Estado del núcleo">
+      <div class="telemetry-meta">
+        <span class="ogve-state-badge" id="core-state-badge" data-state="idle">idle</span>
+        <span id="core-metrics">Inicios: 0 · Módulos: 0 · Listeners: 0</span>
+      </div>
+      <div class="actions" style="margin:0">
+        <button id="core-start" class="primary">Iniciar</button>
+        <button id="core-pause">Pausar</button>
+        <button id="core-resume">Reanudar</button>
+        <button id="core-restart">Reiniciar</button>
+      </div>
+    </section>
+
     <div class="grid">
-      <section class="card"><div class="muted">01 / DESIGN SYSTEM</div><h2>Temas adaptativos</h2><p>El motor administra los temas claro, oscuro y sistema.</p><div class="swatch"></div><div class="status" id="theme-status">Tema: iniciando…</div></section>
-      <section class="card"><div class="muted">02 / COMPONENT ENGINE</div><h2>Componentes</h2><p>Registrá una fábrica y creá elementos reutilizables.</p><div class="sample" id="component-output">Componente de ejemplo</div><div class="muted" id="component-count"></div></section>
-      <section class="card"><div class="muted">03 / RENDER ENGINE</div><h2>Renderizado</h2><p>El motor inserta texto como texto, sin interpretar HTML arbitrario.</p><div class="sample" id="render-output">Esperando acción…</div><div class="actions"><button id="render">Probar renderizado</button></div></section>
-      <section class="card"><div class="muted">04 / LOADING ENGINE</div><h2>Estado de carga</h2><p>Activá y desactivá un estado accesible de carga.</p><div class="sample" id="loading-output">Listo para probar</div><div class="actions"><button id="loading" class="primary">Probar carga</button></div></section>
+      <section class="card">
+        <div>
+          <div class="muted">01 / DESIGN SYSTEM</div>
+          <h2>Temas adaptativos</h2>
+          <p>Soporta claro, oscuro, sistema y presets extensibles sincronizados con el DOM y <code>meta[name="theme-color"]</code>.</p>
+          <div class="swatch"></div>
+          <div class="token-grid" id="token-swatches"></div>
+        </div>
+        <div class="status" id="theme-status" style="margin-top:12px">Tema: iniciando…</div>
+      </section>
+
+      <section class="card">
+        <div>
+          <div class="muted">02 / TOKENS &amp; ERGONOMICS</div>
+          <h2>Tokens y ergonomía</h2>
+          <p>Personalizá el acento en vivo, alterná densidad espacial y modo de alto contraste.</p>
+          <div class="actions">
+            <button id="accent-blue">Azul</button>
+            <button id="accent-emerald">Esmeralda</button>
+            <button id="accent-violet">Violeta</button>
+            <button id="accent-reset">Restaurar</button>
+          </div>
+          <div class="actions">
+            <button id="density-toggle">Densidad: comfortable</button>
+            <button id="contrast-toggle">Contraste: normal</button>
+          </div>
+        </div>
+        <div class="muted" id="token-summary" style="margin-top:12px"></div>
+      </section>
+
+      <section class="card">
+        <div>
+          <div class="muted">03 / COMPONENT ENGINE</div>
+          <h2>Componentes</h2>
+          <p>Registrá una fábrica y creá elementos reutilizables.</p>
+          <div class="sample" id="component-output">Componente de ejemplo</div>
+        </div>
+        <div class="muted" id="component-count"></div>
+      </section>
+
+      <section class="card">
+        <div>
+          <div class="muted">04 / RENDER ENGINE</div>
+          <h2>Renderizado</h2>
+          <p>El motor inserta texto como texto, sin interpretar HTML arbitrario.</p>
+          <div class="sample" id="render-output">Esperando acción…</div>
+        </div>
+        <div class="actions"><button id="render">Probar renderizado</button></div>
+      </section>
+
+      <section class="card">
+        <div>
+          <div class="muted">05 / LOADING &amp; MODULES</div>
+          <h2>Carga y módulos</h2>
+          <p>Estados accesibles ARIA y registro de módulos con dependencias verificadas.</p>
+          <div class="sample" id="loading-output">Listo para probar</div>
+          <div class="muted" id="module-output" style="margin-top:8px">Módulos base activos</div>
+        </div>
+        <div class="actions">
+          <button id="loading" class="primary">Probar carga</button>
+          <button id="register-module">Registrar módulo</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <div>
+          <div class="muted">06 / EVENT BUS &amp; CONFIG</div>
+          <h2>Eventos y configuración</h2>
+          <p>Observá el flujo de eventos del núcleo y actualizá opciones en vivo.</p>
+          <div class="event-feed" id="event-log" aria-live="polite">Esperando eventos…</div>
+        </div>
+        <div class="actions">
+          <button id="toggle-debug">Debug: OFF</button>
+          <button id="emit-ping">Emitir evento</button>
+        </div>
+      </section>
     </div>
-    <p class="muted" style="margin-top:28px">ÖG Visual Engine · versión 0.1.0 · Fase 1</p>
+    <p class="muted" style="margin-top:28px">ÖG Visual Engine · versión 0.2.0 · Fase 2: Design System &amp; Adaptive Themes</p>
   </main>
   <script type="module">
-    import { createVisualEngine } from './src/index.js';
+    import { createVisualEngine } from '../src/index.js';
     const engine = createVisualEngine({ theme: 'system' });
-    engine.start();
     const $ = (id) => document.getElementById(id);
-    const updateTheme = () => { const t=engine.getTheme(); $('theme-status').textContent=`Preferencia: ${t.preference} · Tema activo: ${t.theme}`; };
-    engine.on('themechange', updateTheme); updateTheme();
-    $('light').addEventListener('click',()=>engine.setTheme('light'));
-    $('dark').addEventListener('click',()=>engine.setTheme('dark'));
-    $('system').addEventListener('click',()=>engine.setTheme('system'));
-    engine.registerComponent('demo-chip', ({label='ÖG Component'}) => { const el=document.createElement('span'); el.textContent=label; el.style.cssText='display:inline-block;padding:9px 13px;border-radius:999px;background:var(--ogve-color-accent);color:white;font-weight:700'; return el; });
+
+    const logLines = [];
+    const appendLog = (text) => {
+      logLines.unshift(text);
+      if (logLines.length > 5) logLines.pop();
+      $('event-log').textContent = logLines.join('\n');
+    };
+
+    const renderTokenSwatches = () => {
+      const paths = ['color.background', 'color.surface', 'color.accent', 'color.success', 'color.warning'];
+      const nodes = paths.map((path) => {
+        const val = engine.getToken(path);
+        const pill = document.createElement('span');
+        pill.className = 'ogve-token-pill';
+        const dot = document.createElement('span');
+        dot.className = 'ogve-token-dot';
+        dot.style.background = val;
+        const label = document.createElement('span');
+        label.textContent = `${path.split('.')[1]}: ${val}`;
+        pill.append(dot, label);
+        return pill;
+      });
+      $('token-swatches').replaceChildren(...nodes);
+      $('token-summary').textContent = `Accent activo: ${engine.getToken('color.accent')} · Radius LG: ${engine.getToken('radius.lg')}`;
+    };
+
+    const updateThemeUI = () => {
+      const t = engine.getTheme();
+      $('theme-status').textContent = `Preferencia: ${t.preference} · Activo: ${t.theme} (${t.colorScheme})`;
+      document.querySelectorAll('[data-theme-btn]').forEach((btn) => {
+        btn.setAttribute('aria-pressed', String(btn.dataset.themeBtn === t.preference));
+      });
+      $('density-toggle').textContent = `Densidad: ${engine.getDensity()}`;
+      $('contrast-toggle').textContent = `Contraste: ${engine.getContrast()}`;
+      renderTokenSwatches();
+    };
+
+    const syncTelemetry = () => {
+      const snap = engine.inspect();
+      const badge = $('core-state-badge');
+      badge.textContent = snap.state;
+      badge.setAttribute('data-state', snap.state);
+      $('core-metrics').textContent = `Inicios: ${snap.metrics.startCount} · Módulos: ${snap.modules.length} · Listeners: ${snap.events.listenerCount}`;
+      $('core-start').disabled = snap.state === 'ready' || snap.state === 'paused';
+      $('core-pause').disabled = snap.state !== 'ready';
+      $('core-resume').disabled = snap.state !== 'paused';
+      $('toggle-debug').textContent = `Debug: ${snap.config.debug ? 'ON' : 'OFF'}`;
+    };
+
+    engine.onAny((name, detail) => {
+      const summary = detail && typeof detail === 'object' ? JSON.stringify(detail) : String(detail ?? '');
+      appendLog(`[${name}] ${summary}`);
+      syncTelemetry();
+    });
+
+    engine.start();
+    engine.on('themechange', updateThemeUI);
+    engine.on('tokenschange', updateThemeUI);
+    engine.on('densitychange', updateThemeUI);
+    engine.on('contrastchange', updateThemeUI);
+    updateThemeUI();
+
+    for (const id of ['light', 'dark', 'system', 'midnight', 'warm-paper']) {
+      $(id).addEventListener('click', () => engine.setTheme(id));
+    }
+
+    $('accent-blue').addEventListener('click', () => engine.setAccent('#1d4ed8', { soft: '#eff4ff', contrast: '#ffffff' }));
+    $('accent-emerald').addEventListener('click', () => engine.setAccent('#059669', { soft: '#ecfdf5', contrast: '#ffffff' }));
+    $('accent-violet').addEventListener('click', () => engine.setAccent('#7c3aed', { soft: '#f5f3ff', contrast: '#ffffff' }));
+    $('accent-reset').addEventListener('click', () => engine.resetTokens());
+
+    const densities = ['comfortable', 'compact', 'spacious'];
+    $('density-toggle').addEventListener('click', () => {
+      const next = densities[(densities.indexOf(engine.getDensity()) + 1) % densities.length];
+      engine.setDensity(next);
+    });
+
+    $('contrast-toggle').addEventListener('click', () => {
+      engine.setContrast(engine.getContrast() === 'normal' ? 'high' : 'normal');
+    });
+
+    $('core-start').addEventListener('click', () => { engine.start(); syncTelemetry(); });
+    $('core-pause').addEventListener('click', () => { engine.pause(); syncTelemetry(); });
+    $('core-resume').addEventListener('click', () => { engine.resume(); syncTelemetry(); });
+    $('core-restart').addEventListener('click', () => { engine.restart(); syncTelemetry(); });
+
+    engine.registerComponent('demo-chip', ({label='ÖG Component'}) => { const el=document.createElement('span'); el.textContent=label; el.style.cssText='display:inline-block;padding:9px 13px;border-radius:999px;background:var(--ogve-color-accent);color:var(--ogve-color-accent-contrast,#fff);font-weight:700'; return el; });
     $('component-output').replaceChildren(engine.createComponent('demo-chip',{label:'Componente creado'}));
     $('component-count').textContent=`Componentes registrados: ${engine.getComponents().length}`;
     $('render').addEventListener('click',()=>engine.render($('render-output'),'¡Renderizado correctamente por ÖG!'));
     $('loading').addEventListener('click',()=>{const target=$('loading-output');const active=target.getAttribute('aria-busy')!=='true';engine.setLoading(target,active, 'Procesando…');target.firstChild?.remove();target.textContent=active?'Carga activada':'Carga finalizada';});
+
+    $('register-module').addEventListener('click', () => {
+      if (!engine.hasModule('telemetry-badge')) {
+        engine.use({
+          name: 'telemetry-badge',
+          version: '1.0.0',
+          dependencies: ['theme', 'components'],
+          api: (ctx) => ({
+            summary: () => `Módulo "${ctx.moduleName}" activo (${ctx.lifecycle.getState()})`
+          })
+        });
+      }
+      const modApi = engine.getModule('telemetry-badge');
+      $('module-output').textContent = `${modApi.summary()} · ${engine.getModules().length} módulos`;
+      $('register-module').disabled = true;
+      syncTelemetry();
+    });
+
+    $('toggle-debug').addEventListener('click', () => {
+      engine.configure({ debug: !engine.getConfig('debug') });
+      syncTelemetry();
+    });
+
+    $('emit-ping').addEventListener('click', () => {
+      engine.emit('demo:ping', { at: new Date().toLocaleTimeString() });
+    });
+
+    syncTelemetry();
   </script>
 </body>
 </html>
