@@ -86,10 +86,13 @@ test('theme controller manages built-in modes, custom themes, token overrides, d
   assert.equal(root.getAttribute('data-ogve-color-scheme'), 'dark');
   assert.equal(root.styles.get('--ogve-color-background'), '#08080c');
 
-  // Switch back to standard dark theme and ensure custom inline vars are cleaned up
+  // Standard modes also publish effective variables inline, so the theme
+  // switch works even when the host page does not load the optional theme CSS.
   ctrl.set('dark');
   assert.equal(root.getAttribute('data-ogve-theme'), 'dark');
-  assert.equal(root.styles.has('--ogve-color-background'), false);
+  assert.equal(root.styles.get('--ogve-color-background'), '#111116');
+  ctrl.set('light');
+  assert.equal(root.styles.get('--ogve-color-background'), '#fbf8fc');
 
   // Register custom user theme
   ctrl.registerTheme('ocean', {
