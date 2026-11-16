@@ -360,13 +360,16 @@ export const avatarComponent = {
   }
 };
 
+import { SOCIAL_COMPONENTS } from './social.js';
+
 export const BUILT_IN_COMPONENTS = Object.freeze([
   buttonComponent,
   badgeComponent,
   cardComponent,
   inputComponent,
   alertComponent,
-  avatarComponent
+  avatarComponent,
+  ...SOCIAL_COMPONENTS
 ]);
 
 export function registerBuiltInComponents(registry) {

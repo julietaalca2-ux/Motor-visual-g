@@ -181,7 +181,7 @@ export function createComponentRegistry({ events, getContext = () => ({}) } = {}
     }
 
     const { node, resolvedProps, cleanups, def } = create(name, props);
-    if (node instanceof globalThis.Node || (node && typeof node === 'object' && typeof node.nodeType === 'number')) {
+    if ((typeof globalThis.Node === 'function' && node instanceof globalThis.Node) || (node && typeof node === 'object' && typeof node.nodeType === 'number')) {
       target.replaceChildren(node);
     } else {
       target.textContent = node == null ? '' : String(node);
