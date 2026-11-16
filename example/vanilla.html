@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ÖG Visual Engine — Demo</title>
+  <link rel="stylesheet" href="../src/styles.css">
+  <style>
+    body { margin: 0; min-height: 100vh; padding: 2rem; background: var(--ogve-color-background); color: var(--ogve-color-text); }
+    main { max-width: 42rem; margin: 4rem auto; padding: 2rem; border: 1px solid var(--ogve-color-border); border-radius: var(--ogve-radius-lg); background: var(--ogve-color-surface); }
+    button { padding: .75rem 1rem; border: 0; border-radius: var(--ogve-radius-md); background: var(--ogve-color-accent); color: white; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>ÖG Visual Engine</h1>
+    <p>Demo independiente del motor visual.</p>
+    <button id="theme-toggle" type="button">Cambiar tema</button>
+    <p id="status" aria-live="polite"></p>
+  </main>
+  <script type="module">
+    import { createVisualEngine } from '../src/index.js';
+    const engine = createVisualEngine({ theme: 'system' }).start();
+    const status = document.querySelector('#status');
+    const update = () => { status.textContent = `Tema activo: ${engine.getTheme().theme}`; };
+    engine.on('themechange', update);
+    document.querySelector('#theme-toggle').addEventListener('click', () => {
+      engine.setTheme(engine.getTheme().theme === 'dark' ? 'light' : 'dark');
+      update();
+    });
+    update();
+  </script>
+</body>
+</html>
