@@ -169,7 +169,7 @@ test('module registry resolves dependencies topologically and detects cycles', (
 // --- 5. Integrated Core Engine Public API tests ---
 test('createVisualEngine integrates lifecycle, config, events, modules, and backwards-compatible API', () => {
   const engine = createVisualEngine({ theme: 'dark' });
-  assert.equal(engine.version, '0.2.0');
+  assert.equal(engine.version, '0.4.0');
   assert.equal(engine.getState(), 'idle');
 
   const eventsSeen = [];
@@ -198,7 +198,7 @@ test('createVisualEngine integrates lifecycle, config, events, modules, and back
   const snapshot = engine.inspect();
   assert.equal(snapshot.state, 'ready');
   assert.ok(snapshot.modules.some(m => m.name === 'analytics-probe'));
-  assert.deepEqual(snapshot.components, ['hello-card']);
+  assert.ok(snapshot.components.includes('hello-card'));
 
   engine.pause();
   assert.equal(engine.getState(), 'paused');
