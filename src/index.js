@@ -27,6 +27,8 @@ export {
 export {
   EASING_CURVES,
   MOTION_PRESETS,
+  SPRING_PRESETS,
+  createSpringKeyframes,
   prefersReducedMotion,
   parseDurationMs,
   motionDuration,
@@ -37,3 +39,5 @@ export { createInteractionController } from './interactions/interactions.js';
 export { renderContent } from './rendering/render.js';
 export { setLoading } from './loading/loading.js';
 export { measure } from './performance/measure.js';
+
+export { SOCIAL_COMPONENTS, postComponent, reactionComponent, storyRingComponent, commentComponent } from './components/social.js';
