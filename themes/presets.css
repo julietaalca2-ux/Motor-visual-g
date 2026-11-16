@@ -1,0 +1,31 @@
+[data-ogve-theme="midnight"] {
+  color-scheme: dark;
+  --ogve-color-background: #08080c;
+  --ogve-color-surface: #111118;
+  --ogve-color-surface-elevated: #181822;
+  --ogve-color-surface-subtle: #0d0d13;
+  --ogve-color-text: #f8fafc;
+  --ogve-color-muted: #94a3b8;
+  --ogve-color-border: #242636;
+  --ogve-color-accent: #818cf8;
+  --ogve-color-accent-hover: #a5b4fc;
+  --ogve-color-accent-soft: #191d38;
+  --ogve-color-accent-contrast: #090a14;
+  --ogve-color-focus-ring: rgba(129, 140, 248, 0.42);
+}
+
+[data-ogve-theme="warm-paper"] {
+  color-scheme: light;
+  --ogve-color-background: #faf7f2;
+  --ogve-color-surface: #fffdf9;
+  --ogve-color-surface-elevated: #ffffff;
+  --ogve-color-surface-subtle: #f2ece1;
+  --ogve-color-text: #1f1c18;
+  --ogve-color-muted: #6e6559;
+  --ogve-color-border: #e5ddd0;
+  --ogve-color-accent: #b45309;
+  --ogve-color-accent-hover: #92400e;
+  --ogve-color-accent-soft: #fef3c7;
+  --ogve-color-accent-contrast: #ffffff;
+  --ogve-color-focus-ring: rgba(180, 83, 9, 0.32);
+}
