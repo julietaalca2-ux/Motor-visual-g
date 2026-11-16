@@ -17,7 +17,7 @@ import { delegate } from '../interactions/delegation.js';
 import { createInteractionController } from '../interactions/interactions.js';
 import { measure } from '../performance/measure.js';
 
-export const ENGINE_VERSION = '0.4.0';
+export const ENGINE_VERSION = '0.6.0';
 
 export function createCoreEngine(options = {}) {
   let events = createEventBus({
@@ -188,6 +188,8 @@ export function createCoreEngine(options = {}) {
         animate: motionController.animate,
         transition: motionController.transition,
         stagger: motionController.stagger,
+        spring: motionController.spring,
+        sequence: motionController.sequence,
         registerPreset: motionController.registerPreset,
         getPreset: motionController.getPreset,
         getPresets: motionController.getPresets,
@@ -425,6 +427,8 @@ export function createCoreEngine(options = {}) {
     animate: motionController.animate,
     transition: motionController.transition,
     stagger: motionController.stagger,
+    spring: motionController.spring,
+    sequence: motionController.sequence,
     registerMotionPreset: motionController.registerPreset,
     getMotionPreset: motionController.getPreset,
     getMotionPresets: motionController.getPresets,
